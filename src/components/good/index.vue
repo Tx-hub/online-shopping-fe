@@ -62,7 +62,8 @@ export default {
       const { data: res } = await this.$http.get('/goods', {
         params: this.queryInfo
       })
-      if (res.status !== 200) {
+      console.log(res)
+      if (res.code !== 0) {
         return this.$message.error('获取商品列表失败')
       }
       this.$message.success('获取商品列表成功')
@@ -82,7 +83,6 @@ export default {
     },
     async pay(gid) {
       this.payment.uid = window.sessionStorage.getItem('uid')
-      console.log(gid)
       this.payment.gid = gid
       const { data: res } = await this.$http.post('/payment/add', {
         params: this.payment

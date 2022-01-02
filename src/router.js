@@ -6,11 +6,13 @@ import Goods from './components/good/goods'
 import Welcome from './components/welcome'
 import Home from './components/home'
 import Index from './components/good/index'
+import Register from './components/register'
 Vue.use(Router)
 
 const router = new Router({
   routes: [
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     { path: '/', redictor: '/welcome' },
     { path: '/admin',
       component: Admin,
@@ -23,10 +25,11 @@ const router = new Router({
       children: [  { path: '/index', component: Index }
       ]
     }
+
   ]
 })
 router.beforeResolve((to, from, next) => {
-  if (to.path === '/login') return next()
+  if (to.path === '/login' || to.path === '/register') return next()
   const tokenstr = window.sessionStorage.getItem('token')
   if (!tokenstr) return next('login')
   next()

@@ -4,17 +4,19 @@
       <div class="pic_box">
         <img src="../assets/logo.png">
       </div>
-      <el-form ref="login_form_ref" label-width="0px" class="login_form" :rules="loginFormRules" :model="loginForm">
-        <el-form-item prop="uid">
-          <el-input v-model="loginForm.uid" prefix-icon="iconfont icon-user"></el-input>
+      <el-form ref="register_form_ref" label-width="0px" class="login_form" :rules="registerFormRules" :model="registerForm">
+        <el-form-item prop="username">
+          <el-input v-model="registerForm.username" prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
+          <el-input v-model="registerForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
+        </el-form-item>
+        <el-form-item prop="email">
+          <el-input v-model="registerForm.email" prefix-icon="el-icon-s-finance" ></el-input>
         </el-form-item>
         <el-form-item class="btn">
-          <el-button type="primary" @click="login">登陆</el-button>
-          <el-button type="info" @click="loginFormReset">重置</el-button>
-          <a href="/register">没有账号？点此注册！</a>
+          <el-button type="primary" @click="register">注册</el-button>
+          <el-button type="info" @click="registerFormReset">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -26,16 +28,14 @@
 export default {
   data () {
     return {
-      loginForm: {
-        uid: '',
-        password: ''
+      registerForm: {
+        username: '',
+        password: '',
+        email: ''
       },
-      logs: {
-        username: ''
-      },
-      loginFormRules: {
+      registerFormRules: {
         // 验证用户名是否合法
-        uid: [
+        username: [
           { required: true, message: '请输入登录名称', trigger: 'blur' },
           { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
         ],
@@ -43,26 +43,29 @@ export default {
         password: [
           { required: true, message: '请输入登录密码', trigger: 'blur' },
           { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    loginFormReset () {
-      this.$refs.login_form_ref.resetFields()
+    registerFormReset () {
+      this.$refs.register_form_ref.resetFields()
     },
-    login () {
-      this.$refs.login_form_ref.validate(async valid => {
+    register () {
+      this.$refs.register_form_ref.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.post('/login', this.loginForm)
-        if (res.status !== 200) {
-          return this.$message.error('登录失败 帐号或密码错误!')
+        const { data: res } = await this.$http.post('/register', this.registerForm)
+        if (res.code !== 0) {
+          return this.$message.error('注册失败，服务器错误!')
         }
-        this.$message.success('登录成功!')
+        this.$message.success('注册成功!')
         await this.$http.post('/logs/add', {
           'username': res.data.user.username
         })
-        console.log(res)
         window.sessionStorage.setItem('token', "bearer "+res.data.response.token)
         window.sessionStorage.setItem('username', res.data.user.username)
         window.sessionStorage.setItem('uid', res.data.user.id)
@@ -70,6 +73,7 @@ export default {
           this.$message.success('欢迎管理员登陆!')
           this.$router.push('/admin')
         }
+        this.$router.push('/index')
 
       })
     }
@@ -94,7 +98,7 @@ export default {
 }
 .login_box{
   width: 450px;
-  height: 300px;
+  height: 350px;
   background: white;
   border-radius: 3px;
   position: absolute;
@@ -117,7 +121,6 @@ export default {
       height: 100%;
       border-radius: 50%;
       background-color: #eee;
-
     }
   }
 }
