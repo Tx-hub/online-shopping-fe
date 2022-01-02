@@ -5,6 +5,7 @@ import Admin from './components/admin'
 import Goods from './components/good/goods'
 import Welcome from './components/welcome'
 import Home from './components/home'
+import Index from './components/good/index'
 Vue.use(Router)
 
 const router = new Router({
@@ -17,7 +18,11 @@ const router = new Router({
       children: [ { path: '/welcome', component: Welcome }, { path: '/goods', component: Goods }
       ]
     },
-    { path: '/home', component: Home}
+    { path: '/home',
+      component: Home,
+      children: [  { path: '/index', component: Index }
+      ]
+    }
   ]
 })
 router.beforeResolve((to, from, next) => {

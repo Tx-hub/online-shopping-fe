@@ -63,6 +63,8 @@ export default {
         })
         console.log(res)
         window.sessionStorage.setItem('token', "bearer "+res.data.response.token)
+        window.sessionStorage.setItem('username', res.data.user.username)
+        window.sessionStorage.setItem('uid', res.data.user.id)
         if(res.data.user.type == 1){
           this.$message.success('欢迎管理员登陆!')
           this.$router.push('/admin')
