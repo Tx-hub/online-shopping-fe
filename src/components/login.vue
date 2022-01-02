@@ -5,8 +5,8 @@
         <img src="../assets/logo.png">
       </div>
       <el-form ref="login_form_ref" label-width="0px" class="login_form" :rules="loginFormRules" :model="loginForm">
-        <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+        <el-form-item prop="uid">
+          <el-input v-model="loginForm.uid" prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="loginForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
@@ -26,14 +26,17 @@ export default {
   data () {
     return {
       loginForm: {
-        username: '1',
-        password: '1'
+        uid: '',
+        password: ''
+      },
+      logs: {
+        username: ''
       },
       loginFormRules: {
         // 验证用户名是否合法
-        username: [
+        uid: [
           { required: true, message: '请输入登录名称', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
         ],
         // 验证密码是否合法
         password: [
@@ -51,14 +54,20 @@ export default {
       this.$refs.login_form_ref.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('/login', this.loginForm)
-        console.log(res)
-        if (res.meta.status !== 200) {
-          this.loginLoading = false
+        if (res.status !== 200) {
           return this.$message.error('登录失败 帐号或密码错误!')
         }
         this.$message.success('登录成功!')
-        window.sessionStorage.setItem('token', res.data.token)
-        this.$router.push('/home')
+        await this.$http.post('/logs/add', {
+          'username': res.data.user.username
+        })
+        console.log(res)
+        window.sessionStorage.setItem('token', "bearer "+res.data.response.token)
+        if(res.data.user.type == 1){
+          this.$message.success('欢迎管理员登陆!')
+          this.$router.push('/admin')
+        }
+
       })
     }
   }

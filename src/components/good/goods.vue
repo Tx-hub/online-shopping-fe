@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>商品管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
@@ -44,10 +44,23 @@
       title="添加商品"
       :visible.sync="AddDialogVisible"
       width="30%">
-      <span>添加商品</span>
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="80px">
+        <el-form-item label="商品名称" prop="name">
+          <el-input v-model="addForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品金额" prop="price">
+          <el-input v-model="addForm.price"></el-input>
+        </el-form-item>
+        <el-form-item label="商品描述" prop="describe">
+          <el-input v-model="addForm.describe"></el-input>
+        </el-form-item>
+        <el-form-item label="剩余" prop="total">
+          <el-input v-model="addForm.total"></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="AddDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="AddDialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addGood">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -55,7 +68,7 @@
       title="修改商品"
       :visible.sync="EditDialogVisible"
       width="30%">
-      <span>添加商品</span>
+      <span>修改商品</span>
       <span slot="footer" class="dialog-footer">
     <el-button @click="EditDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="EditDialogVisible = false">确 定</el-button>
@@ -86,7 +99,27 @@ export default {
       goodlist: [],
       AddDialogVisible: false,
       EditDialogVisible: false,
-      DeleteDialogVisible: false
+      DeleteDialogVisible: false,
+      addForm: {
+        name:'',
+        price:'',
+        describe: '',
+        total: ''
+      },
+      addFormRules:  {
+        name: [
+          { required: true, message: '请输入商品名称', trigger: 'blur' }
+        ],
+        price: [
+          { required: true, message: '请输入商品价格', trigger: 'blur' }
+        ],
+        describe: [
+          { required: true, message: '请输入商品描述', trigger: 'blur' }
+        ],
+        total: [
+          { required: true, message: '请输入余量', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -111,6 +144,19 @@ export default {
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
       this.getallgoods()
+    },
+    addGood() {
+      this.AddDialogVisible = false,
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('/goods/add', this.addForm)
+        console.log(res)
+        if (res.status !== 200) {
+          return this.$message.error('商品添加失败!')
+        }
+        this.$message.success('商品添加成功!')
+
+      })
     }
   }
 }
