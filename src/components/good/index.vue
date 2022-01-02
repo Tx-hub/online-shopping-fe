@@ -16,7 +16,7 @@
                 描述:<span>{{i.name}}</span>
                 库存:<span>{{i.total}}</span>
                 <div class="bottom clearfix">
-                  <el-button type="text" class="button" v-if="i.total>0" @click="pay" v-model="payment.gid=i.id">购买</el-button>
+                  <el-button type="text" class="button" v-if="i.total>0" @click="pay(i.id)">购买</el-button>
                 </div>
               </div>
             </el-card>
@@ -80,9 +80,10 @@ export default {
       this.goodstotal = res.goods.meta.total
       this.shoplist = res.goods.data
     },
-    async pay() {
+    async pay(gid) {
       this.payment.uid = window.sessionStorage.getItem('uid')
-      console.log(this.payment.uid)
+      console.log(gid)
+      this.payment.gid = gid
       const { data: res } = await this.$http.post('/payment/add', {
         params: this.payment
       })
@@ -90,14 +91,20 @@ export default {
         return this.$message.error('购买失败')
       }
       this.$message.success('购买成功')
-      this.sub()
+      this.order()
+      this.sub(gid)
 
     },
-    async sub() {
+    async sub(gid) {
       const { data: res } = await this.$http.post('/goods/sub', {
-        params: this.payment
+        "gid":gid
       })
     },
+    async order() {
+      const { data: res } = await this.$http.post('/signup/send', {
+        'username': window.sessionStorage.getItem("username")
+    })
+    }
 
   }
 }
