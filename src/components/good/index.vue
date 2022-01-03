@@ -105,6 +105,16 @@ export default {
 
     },
     async getshoplist(){
+      this.noMore = true
+      this.loading = false
+      this.disabled = true
+      this.queryInfo.pagesize = 100
+      if(this.queryInfo.query === ''){
+        this.loading = true
+        this.noMore = false
+        this.disabled = false
+        this.queryInfo.pagesize = 1
+      }
       const { data: res } = await this.$http.get('/goods', {
         params: this.queryInfo
       })

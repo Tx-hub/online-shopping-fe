@@ -73,13 +73,13 @@ export default {
           return this.$message.error(res.msg)
         }
         this.$message.success('登录成功!')
-        await this.$http.post('/logs/add', {
-          'username': res.data.user.username
-        })
         window.sessionStorage.setItem('token', "bearer "+res.data.response.token)
         window.sessionStorage.setItem('username', res.data.user.username)
         window.sessionStorage.setItem('uid', res.data.user.id)
         window.sessionStorage.setItem('type', res.data.user.type)
+        await this.$http.post('/logs/add', {
+          'username': res.data.user.username
+        })
         if(res.data.user.type == 1){
           this.$message.success('欢迎管理员登陆!')
           this.$router.push('/welcome')
