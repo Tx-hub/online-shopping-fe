@@ -14,11 +14,10 @@
         <el-form-item class="btn">
           <el-button type="primary" @click="login">登陆</el-button>
           <el-button type="info" @click="loginFormReset">重置</el-button>
-          <a href="/register">没有账号？点此注册！</a>
+          <a href="#/register" class="claim_register">没有账号？点此注册！</a>
         </el-form-item>
       </el-form>
     </div>
-
   </div>
 
 </template>
@@ -47,7 +46,22 @@ export default {
       }
     }
   },
+  created () {
+    this.isLogin()
+  },
   methods: {
+    isLogin(){
+      if( window.sessionStorage.getItem('token') && window.sessionStorage.getItem('username')&&window.sessionStorage.getItem('uid')){
+        const user_type = window.sessionStorage.getItem('type')
+        if(user_type == 1){
+          this.$message.success('您已登陆，不需要再次登陆!')
+          this.$router.push('/admin')
+        }else{
+          this.$message.success('您已登陆，不需要再次登陆!')
+          this.$router.push('/home')
+        }
+      }
+    },
     loginFormReset () {
       this.$refs.login_form_ref.resetFields()
     },
@@ -55,20 +69,23 @@ export default {
       this.$refs.login_form_ref.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('/login', this.loginForm)
-        if (res.status !== 200) {
-          return this.$message.error('登录失败 帐号或密码错误!')
+        if (res.code !== 0) {
+          return this.$message.error(res.msg)
         }
         this.$message.success('登录成功!')
         await this.$http.post('/logs/add', {
           'username': res.data.user.username
         })
-        console.log(res)
         window.sessionStorage.setItem('token', "bearer "+res.data.response.token)
         window.sessionStorage.setItem('username', res.data.user.username)
         window.sessionStorage.setItem('uid', res.data.user.id)
+        window.sessionStorage.setItem('type', res.data.user.type)
         if(res.data.user.type == 1){
           this.$message.success('欢迎管理员登陆!')
-          this.$router.push('/admin')
+          this.$router.push('/welcome')
+        }else{
+          this.$message.success('欢迎普通用户登陆!')
+          this.$router.push('/index')
         }
 
       })
@@ -80,6 +97,9 @@ export default {
 .login_container{
   background: #2b4b6b;
   height: 100%
+}
+.claim_register{
+  margin-left: 10px;
 }
 .btn{
   display: flex;

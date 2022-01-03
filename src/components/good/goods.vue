@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>商品管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
@@ -13,7 +13,7 @@
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click="AddDialogVisible = true">添加商品</el-button>
+            <el-button type="primary" @click="AddDialogVisible = true" class="el-butoon-add">添加商品</el-button>
           </el-col>
         </el-row>
       </div>
@@ -130,12 +130,12 @@ export default {
       const { data: res } = await this.$http.get('/goods', {
         params: this.queryInfo
       })
-      if (res.status !== 200) {
-        return this.$message.error('获取商品列表失败')
+      if (res.code !== 0) {
+        return this.$message.error(res.msg)
       }
-      this.$message.success('获取商品列表成功')
-      this.goodstotal = res.goods.meta.total
-      this.goodlist = res.goods.data
+      this.$message.success(res.msg)
+      this.goodstotal = res.data.goods.meta.total
+      this.goodlist = res.data.goods.data
     },
     handleSizeChange(newSize) {
       this.queryInfo.pagesize = newSize
@@ -151,10 +151,10 @@ export default {
         if (!valid) return
         const { data: res } = await this.$http.post('/goods/add', this.addForm)
         console.log(res)
-        if (res.status !== 200) {
+        if (res.code !== 0) {
           return this.$message.error('商品添加失败!')
         }
-        this.$message.success('商品添加成功!')
+        this.$message.success(res.msg)
 
       })
     }
@@ -173,5 +173,8 @@ export default {
 }
 .el-pagination{
   margin-top: 15px;
+}
+.el-butoon-add{
+  margin-top: 10px;
 }
 </style>

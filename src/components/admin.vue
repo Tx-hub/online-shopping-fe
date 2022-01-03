@@ -4,7 +4,12 @@
       <div>
         <span>管理系统</span>
       </div>
-      <el-button type="info" @click="layout">退出</el-button>
+
+      <div class="btn_right">
+        <el-button type="info" @click="layout" size="mini">退出</el-button>
+        <el-button type="info"  size="mini"><a href="#/index">访问商城</a></el-button>
+      </div>
+
     </el-header>
     <el-container>
       <el-aside width="200px">
@@ -55,5 +60,6 @@ export default {
   width: 100%;
   height: 100%;
 }
+
 
 </style>

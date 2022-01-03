@@ -4,25 +4,29 @@ import Login from './components/login'
 import Admin from './components/admin'
 import Goods from './components/good/goods'
 import Welcome from './components/welcome'
+import WelcomeIndex from './components/welcomeindex'
 import Home from './components/home'
 import Index from './components/good/index'
 import Register from './components/register'
+import History from './components/good/history'
 Vue.use(Router)
 
 const router = new Router({
   routes: [
     { path: '/login', component: Login },
     { path: '/register', component: Register },
-    { path: '/', redictor: '/welcome' },
+    { path: '/', redirect: '/login' },
+    { path: '/good/index', redirect: '/index' },
     { path: '/admin',
       component: Admin,
-      redictor: '/welcome',
+      redirect: '/welcome',
       children: [ { path: '/welcome', component: Welcome }, { path: '/goods', component: Goods }
       ]
     },
     { path: '/home',
       component: Home,
-      children: [  { path: '/index', component: Index }
+      redirect: '/WelcomeIndex',
+      children: [  { path: '/index', component: Index },{ path: '/history', component: History},{ path: '/WelcomeIndex',component: WelcomeIndex}
       ]
     }
 
