@@ -9,11 +9,13 @@ import Home from './components/home'
 import Index from './components/good/index'
 import Register from './components/register'
 import History from './components/good/history'
+import Seller from './components/seller'
 Vue.use(Router)
 
 const router = new Router({
   routes: [
     { path: '/login', component: Login },
+    { path: '/seller', component: Seller },
     { path: '/register', component: Register },
     { path: '/', redirect: '/login' },
     { path: '/good/index', redirect: '/index' },
