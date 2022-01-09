@@ -39,13 +39,20 @@ export default {
   },
   methods:{
     sendMessage() {
-      this.$socket.emit('login', '这里是客户端')
+      // this.$socket.emit('login', '这里是客户端')
       this.$message.success("发送成功")
+      const redis = require('redis')
+      const rc = redis.createClient("49.235.114.73:6379");
+      rc.del("tuxiao")
     },
     websocketonmessage(e){ //数据接收
+      const redis = require('redis')
+      const rc = redis.createClient("49.235.114.73:6379");
+      rc.del("tuxiao")
+      console.log("成功删除")
       this.$notify({
         title: '有用户下单啦',
-        message: "用户名:"+e.text,
+        message: "用户名:"+e.text.username+"   时间"+e.text.time,
         type: 'success'
       });
     },
@@ -53,12 +60,4 @@ export default {
 }
 
 </script>
-<!--<script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.js">-->
-<!--// var vue = new Vue()-->
-<!--// vue.$message.success("成功")-->
-<!--// var ws = new WebSocket('ws://localhost:3000/');-->
-<!--// // 这里接受服务器端发过来的消息-->
-<!--// ws.onmessage = function(e) {-->
-<!--//   alert(e+"购买了您的商品")-->
-<!--// }-->
-<!--// </script>-->
+
