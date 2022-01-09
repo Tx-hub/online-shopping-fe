@@ -30,15 +30,8 @@ export default {
 
     }
   },
-  created () {
 
-    // this.server_register()
-    // this.initWebSocket()
-  },
   mounted () {
-    // io('http://127.0.0.1:8080').on('hi', (res) => {
-    //   console.log('socket.io-client', res)
-    // })
     this.$socket.open()
     this.sockets.subscribe('TEAM_NOTICE', (data) => {
       console.log(data)
