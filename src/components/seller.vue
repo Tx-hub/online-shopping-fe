@@ -3,37 +3,56 @@
     <div>
       <h2> 此页面为商家专属页面</h2>
     </div>
-    <el-button type="button" @click="server_register">接收用户购买提醒</el-button>
+    <el-button type="button" @click="sendMessage">接收用户购买提醒</el-button>
   </div>
 </template>
 <script>
 export default {
+  sockets: {
+    connecting() {
+      console.log('正在连接')
+    },
+    disconnect() {
+      console.log("Socket 断开");
+    },
+    connect_failed() {
+      cosnole.log('连接失败')
+    },
+    connect() {
+      console.log('socket connected')
+    },
+    TEAM_NOTICE (data) {
+      this.websocketonmessage(data)
+    }
+  },
   data() {
     return {
 
     }
   },
   created () {
-    this.server_register()
-    this.initWebSocket()
+
+    // this.server_register()
+    // this.initWebSocket()
+  },
+  mounted () {
+    // io('http://127.0.0.1:8080').on('hi', (res) => {
+    //   console.log('socket.io-client', res)
+    // })
+    this.$socket.open()
+    this.sockets.subscribe('TEAM_NOTICE', (data) => {
+      console.log(data)
+    })
   },
   methods:{
-    server_register(){
-      this.$http.post("signup/server_register")
-      this.$message.success("接收成功")
-    },
-    initWebSocket(){
-      const wsuri = "ws://localhost:3000/";
-      this.websock = new WebSocket(wsuri);
-      this.websock.onmessage = this.websocketonmessage;
-      this.websock.onopen = this.websocketonopen;
-      this.websock.onerror = this.websocketonerror;
-      this.websock.onclose = this.websocketclose;
+    sendMessage() {
+      this.$socket.emit('login', '这里是客户端')
+      this.$message.success("发送成功")
     },
     websocketonmessage(e){ //数据接收
       this.$notify({
         title: '有用户下单啦',
-        message: e.data,
+        message: "用户名:"+e.text,
         type: 'success'
       });
     },

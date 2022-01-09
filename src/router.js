@@ -36,7 +36,7 @@ const router = new Router({
 })
 router.beforeResolve((to, from, next) => {
   if (to.path === '/login' || to.path === '/register') return next()
-  const tokenstr = window.sessionStorage.getItem('token')
+  const tokenstr = window.sessionStorage.getItem('token') && window.sessionStorage.getItem('username')&&window.sessionStorage.getItem('uid')
   if (!tokenstr) return next('login')
   next()
 })
