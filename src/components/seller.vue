@@ -22,6 +22,7 @@ export default {
       console.log('socket connected')
     },
     TEAM_NOTICE (data) {
+
       this.websocketonmessage(data)
     }
   },
@@ -38,23 +39,20 @@ export default {
     })
   },
   methods:{
-    sendMessage() {
-      // this.$socket.emit('login', '这里是客户端')
+      sendMessage() {
       this.$message.success("发送成功")
-      const redis = require('redis')
-      const rc = redis.createClient("49.235.114.73:6379");
-      rc.del("tuxiao")
+
+       // var redis = new Redis(6379, '49.235.114.73');
+
+
     },
     websocketonmessage(e){ //数据接收
-      const redis = require('redis')
-      const rc = redis.createClient("49.235.114.73:6379");
-      rc.del("tuxiao")
-      console.log("成功删除")
       this.$notify({
         title: '有用户下单啦',
         message: "用户名:"+e.text.username+"   时间"+e.text.time,
         type: 'success'
       });
+      this.$http.post("redis/del")
     },
   },
 }
